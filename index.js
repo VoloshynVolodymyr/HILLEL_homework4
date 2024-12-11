@@ -1,17 +1,55 @@
-function pow(base, exponent) {
-	let result = base;
-	let isExponentPositive = exponent > 0;
-	if (exponent === 0) return 1;
+let num = 20;
 
-	if (!isExponentPositive) exponent *= -1;
+function generateRandomNumbers(count) {
+    if (count <= 0 || !Number.isInteger(count)) {
+        return "Invalid parameter: count must be a positive integer.";
+    }
 
-		for (let i = 1; i < exponent; i++) {
-			result *= base;
-		}
+    let numbers = [];
+    for (let i = 0; i < count; i++) {
+        numbers.push(Math.round(Math.random() * 900 + 100));
+    }
 
-		return isExponentPositive? result : 1/result;
-	}
+    return numbers;
+}
 
-console.log(pow(10, 0));
-console.log(pow(10, 3));
-console.log(pow(10, -1));
+function getGeneratedNumbersCount(array) {
+    if (!Array.isArray(array)) {
+        return "Invalid parameter: input must be an array.";
+    }
+    return "Count of generated numbers: " + array.length;
+}
+
+function countEvenOddNumbers(array) {
+    if (!Array.isArray(array)) {
+        return "Invalid parameter: input must be an array.";
+    }
+
+    let countEven = 0;
+    let countOdd = 0;
+
+    for (let number of array) {
+        if (number % 2 === 0) countEven++;
+        else countOdd++;
+    }
+
+    let percentageEvenToOdd = countOdd > 0 
+        ? ((countEven / countOdd) * 100).toFixed(2) + "%" 
+        : "There are no odd numbers";
+
+    return (
+        "Count of even elements: " + countEven + "\n" +
+        "Count of odd elements: " + countOdd + "\n" +
+        "Percentage of even to odd: " + percentageEvenToOdd
+    );
+}
+
+function checkProbabilityTheory(count){
+    let data = generateRandomNumbers(count);
+    
+    console.log(data);
+    console.log(getGeneratedNumbersCount(data));
+    console.log(countEvenOddNumbers(data));
+}
+
+checkProbabilityTheory(num);
