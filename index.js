@@ -1,55 +1,47 @@
-let num = 20;
+var services = {
+    "стрижка": "60 грн",
+    "гоління": "80 грн",
+    "Миття голови": "100 грн",
 
-function generateRandomNumbers(count) {
-    if (count <= 0 || !Number.isInteger(count)) {
-        return "Invalid parameter: count must be a positive integer.";
+    isValidPrice: function(currentPrice) {
+        return !currentPrice.toLowerCase().includes("price") &&
+               typeof this[currentPrice] === "string" &&
+               this[currentPrice].includes("грн");
+    },
+
+    get price() {
+        let totalPrice = 0;
+        for (let currentPrice in this) {
+            if (this.isValidPrice(currentPrice)) {
+                totalPrice += parseInt(this[currentPrice]);
+            }
+        }
+        return "Загальна сума послуг: " + totalPrice + " грн";
+    },
+
+    get minPrice() {
+        let arrayPrice = [];
+        for (let currentPrice in this) {
+            if (this.isValidPrice(currentPrice)) {
+                arrayPrice.push(parseInt(this[currentPrice]));
+            }
+        }
+        let minPrice = Math.min(...arrayPrice);
+        return "Мінімальна ціна послуги: " + minPrice + " грн";
+    },
+
+    get maxPrice() {
+        let arrayPrice = [];
+        for (let currentPrice in this) {
+            if (this.isValidPrice(currentPrice)) {
+                arrayPrice.push(parseInt(this[currentPrice]));
+            }
+        }
+        let maxPrice = Math.max(...arrayPrice);
+        return "Максимальна ціна послуги: " + maxPrice + " грн";
     }
+};
 
-    let numbers = [];
-    for (let i = 0; i < count; i++) {
-        numbers.push(Math.round(Math.random() * 900 + 100));
-    }
-
-    return numbers;
-}
-
-function getGeneratedNumbersCount(array) {
-    if (!Array.isArray(array)) {
-        return "Invalid parameter: input must be an array.";
-    }
-    return "Count of generated numbers: " + array.length;
-}
-
-function countEvenOddNumbers(array) {
-    if (!Array.isArray(array)) {
-        return "Invalid parameter: input must be an array.";
-    }
-
-    let countEven = 0;
-    let countOdd = 0;
-
-    for (let number of array) {
-        if (number % 2 === 0) countEven++;
-        else countOdd++;
-    }
-
-    let percentageEvenToOdd = countOdd > 0 
-        ? ((countEven / countOdd) * 100).toFixed(2) + "%" 
-        : "There are no odd numbers";
-
-    return (
-        "Count of even elements: " + countEven + "\n" +
-        "Count of odd elements: " + countOdd + "\n" +
-        "Percentage of even to odd: " + percentageEvenToOdd
-    );
-}
-
-function checkProbabilityTheory(count){
-    let data = generateRandomNumbers(count);
-    
-    console.log(data);
-    console.log(getGeneratedNumbersCount(data));
-    console.log(countEvenOddNumbers(data));
-}
-
-checkProbabilityTheory(num);
+console.log(services.price);  
+console.log(services.minPrice);  
+console.log(services.maxPrice); 
