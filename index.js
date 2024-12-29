@@ -28,7 +28,7 @@ console.log("Валідні адреси: ", validEmails);
 console.log("Не валідні адреси: ", notValidEmails);
 console.log("- - - - - - - - - - - - - - -");
 
-//console.log("Homework 10.2");
+//Homework 10.2;
 const stringArr = ["Wonderful", "Joyful", "Happiness", "Time", "Task", "Apple"];
 const regExp2 = /^[^aA]{6,}/;
 let validStrings = [];
