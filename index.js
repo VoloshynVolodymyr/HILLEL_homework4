@@ -1,47 +1,26 @@
-var services = {
-    "стрижка": "60 грн",
-    "гоління": "80 грн",
-    "Миття голови": "100 грн",
-
-    isValidPrice: function(currentPrice) {
-        return !currentPrice.toLowerCase().includes("price") &&
-               typeof this[currentPrice] === "string" &&
-               this[currentPrice].includes("грн");
+let arr = [
+    {
+        userName:"Test",
+        lastName:"Test",
+        email:"test.test@gmail.com"
     },
-
-    get price() {
-        let totalPrice = 0;
-        for (let currentPrice in this) {
-            if (this.isValidPrice(currentPrice)) {
-                totalPrice += parseInt(this[currentPrice]);
-            }
-        }
-        return "Загальна сума послуг: " + totalPrice + " грн";
+    {
+        userName:"Dmitro",
+        lastName:"Porohov",
+        email:"dmitro.porohov@yahoo.com"
     },
-
-    get minPrice() {
-        let arrayPrice = [];
-        for (let currentPrice in this) {
-            if (this.isValidPrice(currentPrice)) {
-                arrayPrice.push(parseInt(this[currentPrice]));
-            }
-        }
-        let minPrice = Math.min(...arrayPrice);
-        return "Мінімальна ціна послуги: " + minPrice + " грн";
+    {
+        userName:"Andrii",
+        lastName:"",
+        email:"andrii@mail.ru" // Нам такі не підходять
     },
-
-    get maxPrice() {
-        let arrayPrice = [];
-        for (let currentPrice in this) {
-            if (this.isValidPrice(currentPrice)) {
-                arrayPrice.push(parseInt(this[currentPrice]));
-            }
-        }
-        let maxPrice = Math.max(...arrayPrice);
-        return "Максимальна ціна послуги: " + maxPrice + " грн";
-    }
-};
-
-console.log(services.price);  
-console.log(services.minPrice);  
-console.log(services.maxPrice); 
+];
+let validEmails = [], notValidEmails = [];
+let regExp = /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)?@(gmail|yahoo)\.com$/;
+arr.forEach(element => {
+    element.email.search(regExp) === 0
+    ? validEmails.push(element.email)
+    : notValidEmails.push(element.email)
+});
+console.log("Валідні адреси: ", validEmails);
+console.log("Не валідні адреси: ", notValidEmails);
