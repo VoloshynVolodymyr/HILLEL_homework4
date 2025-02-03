@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "e8749914-dc44-4e81-a51d-b70367909baf",
+		"name": "Lesson 18 - Public SOAP APIs",
+		"description": "This is a collection of different SOAP APIs that are completley public and do not require any authentication, making it easier for consumers to play with and understand what APIs are all about by seeing the many different ways in which APIs can be used.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25685088"
+	},
+	"item": [
+		{
+			"name": "Book ISBN Numbers",
+			"item": [
+				{
+					"name": "Is Valid ISBN13 Number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseBody = pm.response.text();\r",
+									"let parseXml = require('xml2js').parseString;\r",
+									"\r",
+									"let xmlResult;\r",
+									"parseXml(responseBody, function (err, result) {\r",
+									"    pm.expect(err).to.be.null;\r",
+									"    xmlResult = result;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is XML\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/xml; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is not empty\", function () {\r",
+									"    pm.expect(responseBody.length).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct SOAP Envelope structure\", function () {\r",
+									"    pm.expect(xmlResult).to.have.property('soap:Envelope');\r",
+									"    pm.expect(xmlResult['soap:Envelope']).to.have.property('soap:Body');\r",
+									"    pm.expect(xmlResult['soap:Envelope']['soap:Body'][0]).to.have.property('m:IsValidISBN13Response');\r",
+									"    pm.expect(xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN13Response'][0]).to.have.property('m:IsValidISBN13Result');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct namespace for IsValidISBN13Response\", function () {\r",
+									"    let namespace = xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN13Response'][0].$['xmlns:m'];\r",
+									"    pm.expect(namespace).to.equal(\"http://webservices.daehosting.com/ISBN\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"SOAP Envelope has correct namespace\", function () {\r",
+									"    let namespace = xmlResult['soap:Envelope'].$['xmlns:soap'];\r",
+									"    pm.expect(namespace).to.equal(\"http://schemas.xmlsoap.org/soap/envelope/\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"IsValidISBN13Result contains boolean value\", function () {\r",
+									"    let isbnResult = xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN13Response'][0]['m:IsValidISBN13Result'][0];\r",
+									"    pm.expect([\"true\", \"false\"]).to.include(isbnResult);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"IsValidISBN13Result is true\", function () {\r",
+									"    let isbnResult = xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN13Response'][0]['m:IsValidISBN13Result'][0];\r",
+									"    pm.expect(isbnResult).to.equal(\"true\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain SOAP Fault\", function () {\r",
+									"    pm.expect(responseBody).to.not.include(\"<soap:Fault>\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Request body contains correct ISBN-13\", function () {\r",
+									"    let requestBody = pm.request.body.raw;\r",
+									"    pm.expect(requestBody).to.include(\"<sISBN>978-1-4612-9090-2</sISBN>\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <IsValidISBN13 xmlns=\"http://webservices.daehosting.com/ISBN\">\n      <sISBN>978-1-4612-9090-2</sISBN>\n    </IsValidISBN13>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "http://webservices.daehosting.com/services/isbnservice.wso",
+							"protocol": "http",
+							"host": [
+								"webservices",
+								"daehosting",
+								"com"
+							],
+							"path": [
+								"services",
+								"isbnservice.wso"
+							]
+						},
+						"description": "The test is done by calculation on the first 12 digits and compare the result with the checksum number at the end. You have to pass a 13 digits number."
+					},
+					"response": []
+				},
+				{
+					"name": "Is Valid ISBN10 Number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseBody = pm.response.text();\r",
+									"let parseXml = require('xml2js').parseString;\r",
+									"\r",
+									"let xmlResult;\r",
+									"parseXml(responseBody, function (err, result) {\r",
+									"    pm.expect(err).to.be.null;\r",
+									"    xmlResult = result;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is XML\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/xml; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is not empty\", function () {\r",
+									"    pm.expect(responseBody.length).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct SOAP Envelope structure\", function () {\r",
+									"    pm.expect(xmlResult).to.have.property('soap:Envelope');\r",
+									"    pm.expect(xmlResult['soap:Envelope']).to.have.property('soap:Body');\r",
+									"    pm.expect(xmlResult['soap:Envelope']['soap:Body'][0]).to.have.property('m:IsValidISBN10Response');\r",
+									"    pm.expect(xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN10Response'][0]).to.have.property('m:IsValidISBN10Result');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct namespace for IsValidISBN10Response\", function () {\r",
+									"    let namespace = xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN10Response'][0].$['xmlns:m'];\r",
+									"    pm.expect(namespace).to.equal(\"http://webservices.daehosting.com/ISBN\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"SOAP Envelope has correct namespace\", function () {\r",
+									"    let namespace = xmlResult['soap:Envelope'].$['xmlns:soap'];\r",
+									"    pm.expect(namespace).to.equal(\"http://schemas.xmlsoap.org/soap/envelope/\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"IsValidISBN10Result contains boolean value\", function () {\r",
+									"    let isbnResult = xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN10Response'][0]['m:IsValidISBN10Result'][0];\r",
+									"    pm.expect([\"true\", \"false\"]).to.include(isbnResult);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"IsValidISBN10Result is true\", function () {\r",
+									"    let isbnResult = xmlResult['soap:Envelope']['soap:Body'][0]['m:IsValidISBN10Response'][0]['m:IsValidISBN10Result'][0];\r",
+									"    pm.expect(isbnResult).to.equal(\"true\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain SOAP Fault\", function () {\r",
+									"    pm.expect(responseBody).to.not.include(\"<soap:Fault>\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Request body contains correct ISBN\", function () {\r",
+									"    let requestBody = pm.request.body.raw;\r",
+									"    pm.expect(requestBody).to.include(\"<sISBN>0-19-852663-6</sISBN>\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <IsValidISBN10 xmlns=\"http://webservices.daehosting.com/ISBN\">\n      <sISBN>0-19-852663-6</sISBN>\n    </IsValidISBN10>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "http://webservices.daehosting.com/services/isbnservice.wso",
+							"protocol": "http",
+							"host": [
+								"webservices",
+								"daehosting",
+								"com"
+							],
+							"path": [
+								"services",
+								"isbnservice.wso"
+							]
+						},
+						"description": "The test is done by calculation on the first 9 digits and compare the result with the checksum number at the end. You have to pass a 10 digits number or 8 digits and an X."
+					},
+					"response": []
+				}
+			],
+			"description": "SOAP APIs for book ISBN numbers.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
